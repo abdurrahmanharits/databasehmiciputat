@@ -76,7 +76,10 @@ def validate_strict(df):
     if bad_rows:
         st.error("Ditemukan baris dengan Kampus yang tidak sesuai untuk Komisariat mereka. Contoh:")
         sample = pd.DataFrame(bad_rows, columns=['_index','Asal Komisariat','Kampus (file)','Kampus (expected)']).drop(columns=['_index'])
-        st.dataframe(sample)
+        # show sample with numbering starting at 1
+        sample_display = sample.reset_index(drop=True).copy()
+        sample_display.insert(0, 'No', sample_display.index + 1)
+        st.dataframe(sample_display)
         st.error("Perbaiki Kampus pada file CSV agar sesuai mapping komisariat→institusi, lalu unggah ulang.")
         st.stop()
 
@@ -133,7 +136,10 @@ st.markdown("---")
 
 # --- table + download + quick stats
 st.subheader("Tabel Data")
-st.dataframe(df.reset_index(drop=True), use_container_width=True)
+# show numbering from 1 in the displayed table (do not modify the downloadable CSV)
+df_display = df.reset_index(drop=True).copy()
+df_display.insert(0, 'No', df_display.index + 1)
+st.dataframe(df_display, use_container_width=True)
 
 csv = df.to_csv(index=False).encode('utf-8')
 st.download_button(label="Download CSV (filtered)", data=csv, file_name='kaders_hmi_ciputat_filtered.csv', mime='text/csv')
@@ -145,6 +151,8 @@ lk_counts = pd.DataFrame({
     'Selesai': [ (df['LK 1']=='Selesai').sum(), (df['LK 2']=='Selesai').sum(), (df['LK 3']=='Selesai').sum() ],
     'Belum': [ (df['LK 1']=='Belum').sum(), (df['LK 2']=='Belum').sum(), (df['LK 3']=='Belum').sum() ]
 })
+# add numbering starting from 1
+lk_counts.insert(0, 'No', range(1, len(lk_counts) + 1))
 st.table(lk_counts)
 
 # --- simple charts
