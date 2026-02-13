@@ -12,6 +12,27 @@ def load_data(path_or_buffer):
 uploaded = st.sidebar.file_uploader("Unggah CSV data kader (opsional)", type=["csv"])
 DF = load_data(uploaded) if uploaded is not None else load_data('data/kaders_hmi_ciputat.csv')
 
+# komisariat→kampus mapping (must be defined before any validation)
+KOMISARIAT_TO_KAMPUS = {
+    "Komfakdisa": ["UIN"],
+    "Komfaksy": ["UIN"],
+    "Komtar": ["UIN"],
+    "Komfakda": ["UIN"],
+    "Komfastek": ["UIN"],
+    "Kafeis": ["UIN"],
+    "Kofah": ["UIN"],
+    "Komfakdik": ["UIN"],
+    "Kompsi": ["UIN"],
+    "Kolega": ["STIE GANESHA"],
+    "Komipam": ["UNPAM"],
+    "Komfaktek": ["UNPAM"],
+    "Komfisip": ["UIN"],
+    "kotaro": ["STAN"],
+    "Komfatma": ["STAI MULA SADRA"],
+    "Komici": ["UMJ"],
+}
+KOMISARIAT_OPTIONS = ["Semua"] + list(KOMISARIAT_TO_KAMPUS.keys())
+
 # strict validation for uploaded dataset (reject if invalid)
 def validate_strict(df):
     required_cols = {'Asal Komisariat', 'Kampus'}
@@ -49,27 +70,7 @@ DF = validate_strict(DF)
 st.title("Database Kader HMI — Cabang Ciputat")
 st.markdown("Data dasar kader untuk visualisasi, filter, dan ringkasan LK (Latihan Kader)")
 
-# --- komisariat → kampus mapping and sidebar filters
-KOMISARIAT_TO_KAMPUS = {
-    "Komfakdisa": ["UIN"],
-    "Komfaksy": ["UIN"],
-    "Komtar": ["UIN"],
-    "Komfakda": ["UIN"],
-    "Komfastek": ["UIN"],
-    "Kafeis": ["UIN"],
-    "Kofah": ["UIN"],
-    "Komfakdik": ["UIN"],
-    "Kompsi": ["UIN"],
-    "Kolega": ["STIE GANESHA"],
-    "Komipam": ["UNPAM"],
-    "Komfaktek": ["UNPAM"],
-    "Komfisip": ["UIN"],
-    "kotaro": ["STAN"],
-    "Komfatma": ["STAI MULA SADRA"],
-    "Komici": ["UMJ"],
-}
-
-KOMISARIAT_OPTIONS = ["Semua"] + list(KOMISARIAT_TO_KAMPUS.keys())
+# --- komisariat → kampus mapping and sidebar filters (mapping defined earlier)
 
 with st.sidebar:
     st.header("Filter")
