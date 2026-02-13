@@ -3,6 +3,36 @@ import pandas as pd
 
 st.set_page_config(page_title="Kader HMI - Cabang Ciputat", layout="wide")
 
+# set background image from `data/background.jpg` (falls back gracefully if missing)
+def set_page_background(image_path: str = "data/background.jpg"):
+    try:
+        with open(image_path, "rb") as f:
+            data = f.read()
+        import base64
+        b64 = base64.b64encode(data).decode()
+        css = f"""
+        <style>
+        .stApp {{
+            background-image: url('data:image/jpg;base64,{b64}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        /* make containers slightly opaque for readability */
+        .stApp .main .block-container {{
+            background-color: rgba(255,255,255,0.85);
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+        }}
+        </style>
+        """
+        st.markdown(css, unsafe_allow_html=True)
+    except FileNotFoundError:
+        # silently ignore if no image
+        pass
+
+set_page_background()
+
 @st.cache_data
 def load_data(path_or_buffer):
     # accepts a path or file-like buffer from uploader
