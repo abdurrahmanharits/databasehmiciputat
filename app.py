@@ -12,32 +12,39 @@ def load_data(path_or_buffer):
 uploaded = st.sidebar.file_uploader("Unggah CSV data kader (opsional)", type=["csv"])
 DF = load_data(uploaded) if uploaded is not None else load_data('data/kaders_hmi_ciputat.csv')
 
-# validate loaded/uploaded dataset against komisariat→kampus mapping
-def validate_and_offer_fix(df):
-    if 'Asal Komisariat' not in df.columns or 'Kampus' not in df.columns:
-        st.error("CSV harus memiliki kolom 'Asal Komisariat' dan 'Kampus'.")
-        return df
+# strict validation for uploaded dataset (reject if invalid)
+def validate_strict(df):
+    required_cols = {'Asal Komisariat', 'Kampus'}
+    if not required_cols.issubset(set(df.columns)):
+        st.error("CSV harus memiliki kolom: 'Asal Komisariat' dan 'Kampus'. Perbaiki file dan unggah ulang.")
+        st.stop()
 
-    mismatches = []
+    # unknown komisariat values
+    komisariat_vals = set(df['Asal Komisariat'].dropna().unique())
+    known_komisariat = set(KOMISARIAT_TO_KAMPUS.keys())
+    unknown_kom = sorted(list(komisariat_vals - known_komisariat))
+    if unknown_kom:
+        st.error(f"Ditemukan komisariat tidak dikenal: {', '.join(unknown_kom)}. Perbaiki file dan unggah ulang.")
+        st.stop()
+
+    # kampus must match expected mapping for each komisariat
+    bad_rows = []
     for i, row in df.iterrows():
-        kom = row.get('Asal Komisariat')
-        kamp = row.get('Kampus')
+        kom = row['Asal Komisariat']
+        kamp = row['Kampus']
         expected = KOMISARIAT_TO_KAMPUS.get(kom)
         if expected and kamp not in expected:
-            mismatches.append(i)
+            bad_rows.append((i, kom, kamp, expected[0]))
+    if bad_rows:
+        st.error("Ditemukan baris dengan Kampus yang tidak sesuai untuk Komisariat mereka. Contoh:")
+        sample = pd.DataFrame(bad_rows, columns=['_index','Asal Komisariat','Kampus (file)','Kampus (expected)']).drop(columns=['_index'])
+        st.dataframe(sample)
+        st.error("Perbaiki Kampus pada file CSV agar sesuai mapping komisariat→institusi, lalu unggah ulang.")
+        st.stop()
 
-    if mismatches:
-        st.warning(f"Ditemukan {len(mismatches)} baris dengan kampus yang tidak sesuai untuk komisariat mereka.")
-        if st.checkbox("Tampilkan contoh baris bermasalah"):
-            st.dataframe(df.loc[mismatches].reset_index(drop=True))
-        if st.button("Perbaiki otomatis kampus sesuai mapping"):
-            for i in mismatches:
-                kom = df.at[i, 'Asal Komisariat']
-                df.at[i, 'Kampus'] = KOMISARIAT_TO_KAMPUS.get(kom, [df.at[i, 'Kampus']])[0]
-            st.success("Perbaikan otomatis selesai — kampus disesuaikan dengan mapping komisariat.")
     return df
 
-DF = validate_and_offer_fix(DF)
+DF = validate_strict(DF)
 
 st.title("Database Kader HMI — Cabang Ciputat")
 st.markdown("Data dasar kader untuk visualisasi, filter, dan ringkasan LK (Latihan Kader)")
