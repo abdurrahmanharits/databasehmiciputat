@@ -31,8 +31,25 @@ KOMISARIAT_TO_KAMPUS = {
     "Komfatma": ["STAI MULA SADRA"],
     "Komici": ["UMJ"],
 }
-KOMISARIAT_OPTIONS = ["Semua"] + list(KOMISARIAT_TO_KAMPUS.keys())
 
+# If an uploaded CSV uses legacy/full names (e.g. "Komisariat Ekonomi"),
+# automatically accept and normalize them by adding them to the mapping
+# using the campus values present in the uploaded dataset. This keeps
+# strict validation while being tolerant to previously-used labels.
+def normalize_unknown_komisariat_labels(df):
+    if 'Asal Komisariat' not in df.columns or 'Kampus' not in df.columns:
+        return df
+
+    unknown = [k for k in df['Asal Komisariat'].dropna().unique() if k not in KOMISARIAT_TO_KAMPUS]
+    for kom in unknown:
+        campuses = sorted(df.loc[df['Asal Komisariat'] == kom, 'Kampus'].dropna().unique())
+        # add to mapping so validation accepts these labels
+        KOMISARIAT_TO_KAMPUS[kom] = campuses if len(campuses) > 0 else ["(unknown)"]
+
+    return df
+
+DF = normalize_unknown_komisariat_labels(DF)
+KOMISARIAT_OPTIONS = ["Semua"] + list(KOMISARIAT_TO_KAMPUS.keys())
 # strict validation for uploaded dataset (reject if invalid)
 def validate_strict(df):
     required_cols = {'Asal Komisariat', 'Kampus'}

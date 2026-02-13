@@ -29,7 +29,7 @@ Quick start (Windows PowerShell):
 Fitur tambahan
 - Upload CSV: gunakan tombol di sidebar untuk mengganti dataset sementara
 - Filter `Asal Komisariat` sekarang berupa dropdown (pilih satu komisariat atau "Semua"). Pilihan `Kampus` otomatis dibatasi sesuai mapping komisariat→institusi.
-- Upload CSV: app menerapkan **validasi ketat** — file akan ditolak (ditampilkan error) jika terdapat komisariat tidak dikenal atau Kampus tidak sesuai dengan mapping komisariat→institusi. Perbaiki CSV lalu unggah ulang.
+- Upload CSV: app menerapkan **validasi ketat**, tetapi juga **menormalisasi** label komisariat yang sudah ada di database (mis. `Komisariat Ekonomi`) — nama yang tidak dikenal akan ditambahkan ke mapping otomatis berdasarkan nilai `Kampus` yang ada di file sehingga tidak langsung ditolak. Jika kampus tidak sesuai mapping atau ada komisariat benar-benar baru tanpa kampus, app akan menolak upload.
 - Download CSV filtered: tombol tersedia pada app
 
 File penting:
