@@ -3,8 +3,8 @@ import pandas as pd
 
 st.set_page_config(page_title="Kader HMI - Cabang Ciputat", layout="wide")
 
-# set background image from `data/background.jpg` (falls back gracefully if missing)
-def set_page_background(image_path: str = "data/background.jpg"):
+# set header image (small hero) from `data/background.jpg`
+def set_header_image(image_path: str = "data/background.jpg", height_px: int = 220):
     try:
         with open(image_path, "rb") as f:
             data = f.read()
@@ -12,26 +12,49 @@ def set_page_background(image_path: str = "data/background.jpg"):
         b64 = base64.b64encode(data).decode()
         css = f"""
         <style>
-        .stApp {{
+        /* page header (hero) */
+        .page-header {{
+            width: 100%;
+            height: {height_px}px;
             background-image: url('data:image/jpg;base64,{b64}');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
+            border-radius: 10px;
+            position: relative;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
         }}
-        /* make containers slightly opaque for readability */
+        .page-header .overlay {{
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+        }}
+        .page-header .title {{
+            position: relative;
+            color: #ffffff;
+            padding: 1.5rem 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }}
+        /* keep main container readable */
         .stApp .main .block-container {{
-            background-color: rgba(255,255,255,0.85);
+            background-color: rgba(255,255,255,0.92);
             padding: 1rem 1.25rem;
             border-radius: 8px;
         }}
         </style>
+        <div class="page-header">
+          <div class="overlay"></div>
+          <div class="title">Database Kader HMI — Cabang Ciputat</div>
+        </div>
         """
         st.markdown(css, unsafe_allow_html=True)
     except FileNotFoundError:
         # silently ignore if no image
         pass
 
-set_page_background()
+set_header_image()
 
 @st.cache_data
 def load_data(path_or_buffer):
