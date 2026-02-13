@@ -1,6 +1,12 @@
 # Database Kader HMI — Cabang Ciputat
 
-Singkat: venv, CSV contoh, dan Streamlit app untuk visualisasi data kader.
+![CI](https://github.com/abdurrahmanharits/databasehmiciputat/actions/workflows/ci.yml/badge.svg)
+
+Singkat: venv, CSV contoh, dan Streamlit app untuk visualisasi data kader. Sekarang termasuk:
+- uploader CSV sementara di-app
+- ringkasan status LK (LK1/2/3)
+- contoh kolom tambahan: `Tanggal Lahir`, `Kontak`
+- GitHub Actions CI dasar
 
 Quick start (Windows PowerShell):
 
@@ -20,9 +26,14 @@ Quick start (Windows PowerShell):
 
    streamlit run app.py
 
-File penting:
-- `data/kaders_hmi_ciputat.csv` — data contoh
-- `app.py` — Streamlit visualizer
-- `requirements.txt` — dependensi
+Fitur tambahan
+- Upload CSV: gunakan tombol di sidebar untuk mengganti dataset sementara
+- Download CSV filtered: tombol tersedia pada app
 
-Jika Anda mau, saya bisa menambahkan kolom, impor data nyata, atau menambahkan visualisasi khusus.
+File penting:
+- `data/kaders_hmi_ciputat.csv` — contoh data (termasuk `Tanggal Lahir`, `Kontak`)
+- `app.py` — Streamlit visualizer + uploader + ringkasan LK
+- `.github/workflows/ci.yml` — CI sederhana yang memeriksa instalasi
+
+Kontribusi
+- Mau format field lain atau peta? Beri tahu saya file sumber atau kolom yang ingin ditambahkan.
