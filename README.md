@@ -31,7 +31,7 @@ Fitur tambahan
 - Filter `Asal Komisariat` sekarang berupa dropdown (pilih satu komisariat atau "Semua"). Pilihan `Kampus` otomatis dibatasi sesuai mapping komisariat→institusi.
 - Upload CSV: app menerapkan **validasi ketat**, tetapi juga **menormalisasi** label komisariat yang sudah ada di database (mis. `Komisariat Ekonomi`) — nama yang tidak dikenal akan ditambahkan ke mapping otomatis berdasarkan nilai `Kampus` yang ada di file sehingga tidak langsung ditolak. Jika kampus tidak sesuai mapping atau ada komisariat benar-benar baru tanpa kampus, app akan menolak upload.
 - Semua tabel yang ditampilkan di dashboard sekarang menampilkan kolom nomor (`No`) mulai dari **1** (tidak lagi dari 0).
-- Download CSV filtered: tombol tersedia pada app
+- Download CSV filtered: tombol tersedia pada app — **file CSV yang diunduh sekarang menyertakan kolom `No` (1-based)**.
 
 File penting:
 - `data/kaders_hmi_ciputat.csv` — contoh data (termasuk `Tanggal Lahir`, `Kontak`) — `Kampus` disesuaikan menurut mapping komisariat

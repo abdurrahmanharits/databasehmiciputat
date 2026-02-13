@@ -141,7 +141,10 @@ df_display = df.reset_index(drop=True).copy()
 df_display.insert(0, 'No', df_display.index + 1)
 st.dataframe(df_display, use_container_width=True)
 
-csv = df.to_csv(index=False).encode('utf-8')
+# prepare downloadable CSV with 1-based numbering
+csv_df = df.reset_index(drop=True).copy()
+csv_df.insert(0, 'No', csv_df.index + 1)
+csv = csv_df.to_csv(index=False).encode('utf-8')
 st.download_button(label="Download CSV (filtered)", data=csv, file_name='kaders_hmi_ciputat_filtered.csv', mime='text/csv')
 
 # quick aggregates
