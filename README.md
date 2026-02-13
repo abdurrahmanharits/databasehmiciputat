@@ -32,7 +32,7 @@ Fitur tambahan
 - Upload CSV: app menerapkan **validasi ketat**, tetapi juga **menormalisasi** label komisariat yang sudah ada di database (mis. `Komisariat Ekonomi`) — nama yang tidak dikenal akan ditambahkan ke mapping otomatis berdasarkan nilai `Kampus` yang ada di file sehingga tidak langsung ditolak. Jika kampus tidak sesuai mapping atau ada komisariat benar-benar baru tanpa kampus, app akan menolak upload.
 - Semua tabel yang ditampilkan di dashboard sekarang menampilkan kolom nomor (`No`) mulai dari **1** (tidak lagi dari 0).
 - Download CSV filtered: tombol tersedia pada app — **file CSV yang diunduh sekarang menyertakan kolom `No` (1-based)**.
-- Header image: app sekarang menampilkan `data/background.jpg` sebagai header/hero kecil di bagian atas halaman (bukan background penuh). Letakkan file gambar lain di folder `data/` untuk menggantinya.
+- Header image: app sekarang menampilkan `data/background.jpg` sebagai header/hero kecil di bagian atas halaman (bukan background penuh). Gambar ditampilkan utuh (tidak terpotong). Body utama menggunakan background semi-transparan 50% sehingga gambar header tetap terlihat. Letakkan file gambar lain di folder `data/` untuk menggantinya.
 
 File penting:
 - `data/kaders_hmi_ciputat.csv` — contoh data (termasuk `Tanggal Lahir`, `Kontak`) — `Kampus` disesuaikan menurut mapping komisariat

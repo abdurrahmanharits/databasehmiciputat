@@ -12,13 +12,14 @@ def set_header_image(image_path: str = "data/background.jpg", height_px: int = 2
         b64 = base64.b64encode(data).decode()
         css = f"""
         <style>
-        /* page header (hero) */
+        /* page header (hero) - show full image without cropping */
         .page-header {{
             width: 100%;
             height: {height_px}px;
             background-image: url('data:image/jpg;base64,{b64}');
-            background-size: cover;
-            background-position: center;
+            background-size: contain; /* ensure whole image is visible */
+            background-repeat: no-repeat;
+            background-position: center center;
             border-radius: 10px;
             position: relative;
             margin-bottom: 1.2rem;
@@ -27,7 +28,7 @@ def set_header_image(image_path: str = "data/background.jpg", height_px: int = 2
         .page-header .overlay {{
             position: absolute;
             inset: 0;
-            background: linear-gradient(to bottom right, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+            background: linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(0,0,0,0.05));
         }}
         .page-header .title {{
             position: relative;
@@ -37,9 +38,9 @@ def set_header_image(image_path: str = "data/background.jpg", height_px: int = 2
             font-weight: 700;
             line-height: 1.2;
         }}
-        /* keep main container readable */
+        /* set body/main container transparency to 50% so header shows through */
         .stApp .main .block-container {{
-            background-color: rgba(255,255,255,0.92);
+            background-color: rgba(255,255,255,0.5); /* 50% transparent */
             padding: 1rem 1.25rem;
             border-radius: 8px;
         }}
