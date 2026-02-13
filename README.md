@@ -39,3 +39,5 @@ File penting:
 
 Kontribusi
 - Mau format field lain atau peta? Beri tahu saya file sumber atau kolom yang ingin ditambahkan.
+
+Deployment note: pushed a small change to force redeploy — if you host on Streamlit Cloud, open the app's "Manage app" and trigger a redeploy or wait for the new build to finish.
