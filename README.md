@@ -28,12 +28,13 @@ Quick start (Windows PowerShell):
 
 Fitur tambahan
 - Upload CSV: gunakan tombol di sidebar untuk mengganti dataset sementara
-- Filter `Asal Komisariat` sekarang berupa dropdown (pilih satu komisariat atau "Semua")
+- Filter `Asal Komisariat` sekarang berupa dropdown (pilih satu komisariat atau "Semua"). Pilihan `Kampus` otomatis dibatasi sesuai mapping komisariat→institusi.
+- Upload CSV: app men-validate pasangan `Asal Komisariat` ↔ `Kampus` dan menyediakan opsi perbaikan otomatis jika ditemukan mismatch.
 - Download CSV filtered: tombol tersedia pada app
 
 File penting:
-- `data/kaders_hmi_ciputat.csv` — contoh data (termasuk `Tanggal Lahir`, `Kontak`) — nilai `Asal Komisariat` diperbarui ke daftar komisariat standar
-- `app.py` — Streamlit visualizer + uploader + ringkasan LK
+- `data/kaders_hmi_ciputat.csv` — contoh data (termasuk `Tanggal Lahir`, `Kontak`) — `Kampus` disesuaikan menurut mapping komisariat
+- `app.py` — Streamlit visualizer + uploader + ringkasan LK + validasi mapping
 - `.github/workflows/ci.yml` — CI sederhana yang memeriksa instalasi
 
 Kontribusi

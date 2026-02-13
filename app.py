@@ -12,34 +12,70 @@ def load_data(path_or_buffer):
 uploaded = st.sidebar.file_uploader("Unggah CSV data kader (opsional)", type=["csv"])
 DF = load_data(uploaded) if uploaded is not None else load_data('data/kaders_hmi_ciputat.csv')
 
+# validate loaded/uploaded dataset against komisariat→kampus mapping
+def validate_and_offer_fix(df):
+    if 'Asal Komisariat' not in df.columns or 'Kampus' not in df.columns:
+        st.error("CSV harus memiliki kolom 'Asal Komisariat' dan 'Kampus'.")
+        return df
+
+    mismatches = []
+    for i, row in df.iterrows():
+        kom = row.get('Asal Komisariat')
+        kamp = row.get('Kampus')
+        expected = KOMISARIAT_TO_KAMPUS.get(kom)
+        if expected and kamp not in expected:
+            mismatches.append(i)
+
+    if mismatches:
+        st.warning(f"Ditemukan {len(mismatches)} baris dengan kampus yang tidak sesuai untuk komisariat mereka.")
+        if st.checkbox("Tampilkan contoh baris bermasalah"):
+            st.dataframe(df.loc[mismatches].reset_index(drop=True))
+        if st.button("Perbaiki otomatis kampus sesuai mapping"):
+            for i in mismatches:
+                kom = df.at[i, 'Asal Komisariat']
+                df.at[i, 'Kampus'] = KOMISARIAT_TO_KAMPUS.get(kom, [df.at[i, 'Kampus']])[0]
+            st.success("Perbaikan otomatis selesai — kampus disesuaikan dengan mapping komisariat.")
+    return df
+
+DF = validate_and_offer_fix(DF)
+
 st.title("Database Kader HMI — Cabang Ciputat")
 st.markdown("Data dasar kader untuk visualisasi, filter, dan ringkasan LK (Latihan Kader)")
 
-# --- sidebar filters
-KOMISARIAT_OPTIONS = [
-    "Semua",
-    "Komfakdisa",
-    "Komfaksy",
-    "Komtar",
-    "Komfakda",
-    "Komfastek",
-    "Kafeis",
-    "Kofah",
-    "Komfakdik",
-    "Kompsi",
-    "Kolega",
-    "Komipam",
-    "Komfaktek",
-    "Komfisip",
-    "kotaro",
-    "Komfatma",
-    "Komici",
-]
+# --- komisariat → kampus mapping and sidebar filters
+KOMISARIAT_TO_KAMPUS = {
+    "Komfakdisa": ["UIN"],
+    "Komfaksy": ["UIN"],
+    "Komtar": ["UIN"],
+    "Komfakda": ["UIN"],
+    "Komfastek": ["UIN"],
+    "Kafeis": ["UIN"],
+    "Kofah": ["UIN"],
+    "Komfakdik": ["UIN"],
+    "Kompsi": ["UIN"],
+    "Kolega": ["STIE GANESHA"],
+    "Komipam": ["UNPAM"],
+    "Komfaktek": ["UNPAM"],
+    "Komfisip": ["UIN"],
+    "kotaro": ["STAN"],
+    "Komfatma": ["STAI MULA SADRA"],
+    "Komici": ["UMJ"],
+}
+
+KOMISARIAT_OPTIONS = ["Semua"] + list(KOMISARIAT_TO_KAMPUS.keys())
+
 with st.sidebar:
     st.header("Filter")
     komisariat = st.selectbox("Asal Komisariat", options=KOMISARIAT_OPTIONS, index=0)
     tahun = st.multiselect("Tahun Kaderisasi", options=sorted(DF['Tahun Kaderisasi'].unique()), default=sorted(DF['Tahun Kaderisasi'].unique()))
-    kampus = st.multiselect("Kampus", options=sorted(DF['Kampus'].unique()), default=sorted(DF['Kampus'].unique()))
+
+    # limit campus choices when a specific komisariat is selected
+    if komisariat != "Semua":
+        kampus_default = KOMISARIAT_TO_KAMPUS.get(komisariat, [])
+        kampus = st.multiselect("Kampus", options=sorted(DF['Kampus'].unique()), default=kampus_default)
+    else:
+        kampus = st.multiselect("Kampus", options=sorted(DF['Kampus'].unique()), default=sorted(DF['Kampus'].unique()))
+
     lk_filter = st.multiselect("Status LK (pilih untuk filter)", options=["Selesai","Belum"], default=["Selesai","Belum"])
     search = st.text_input("Cari nama / NIK")
 
