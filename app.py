@@ -193,7 +193,8 @@ st.subheader("Tabel Data")
 # show numbering from 1 in the displayed table (do not modify the downloadable CSV)
 df_display = df.reset_index(drop=True).copy()
 df_display.insert(0, 'No', df_display.index + 1)
-st.dataframe(df_display, use_container_width=True)
+# use `width='stretch'` instead of deprecated `use_container_width=True`
+st.dataframe(df_display, width='stretch')
 
 # prepare downloadable CSV with 1-based numbering
 csv_df = df.reset_index(drop=True).copy()
