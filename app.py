@@ -16,16 +16,39 @@ st.title("Database Kader HMI — Cabang Ciputat")
 st.markdown("Data dasar kader untuk visualisasi, filter, dan ringkasan LK (Latihan Kader)")
 
 # --- sidebar filters
+KOMISARIAT_OPTIONS = [
+    "Semua",
+    "Komfakdisa",
+    "Komfaksy",
+    "Komtar",
+    "Komfakda",
+    "Komfastek",
+    "Kafeis",
+    "Kofah",
+    "Komfakdik",
+    "Kompsi",
+    "Kolega",
+    "Komipam",
+    "Komfaktek",
+    "Komfisip",
+    "kotaro",
+    "Komfatma",
+    "Komici",
+]
 with st.sidebar:
     st.header("Filter")
-    komisariat = st.multiselect("Asal Komisariat", options=sorted(DF['Asal Komisariat'].unique()), default=sorted(DF['Asal Komisariat'].unique()))
+    komisariat = st.selectbox("Asal Komisariat", options=KOMISARIAT_OPTIONS, index=0)
     tahun = st.multiselect("Tahun Kaderisasi", options=sorted(DF['Tahun Kaderisasi'].unique()), default=sorted(DF['Tahun Kaderisasi'].unique()))
     kampus = st.multiselect("Kampus", options=sorted(DF['Kampus'].unique()), default=sorted(DF['Kampus'].unique()))
     lk_filter = st.multiselect("Status LK (pilih untuk filter)", options=["Selesai","Belum"], default=["Selesai","Belum"])
     search = st.text_input("Cari nama / NIK")
 
 # --- apply filters
-df = DF[DF['Asal Komisariat'].isin(komisariat) & DF['Tahun Kaderisasi'].isin(tahun) & DF['Kampus'].isin(kampus)]
+if komisariat == "Semua":
+    df = DF[DF['Tahun Kaderisasi'].isin(tahun) & DF['Kampus'].isin(kampus)]
+else:
+    df = DF[(DF['Asal Komisariat'] == komisariat) & DF['Tahun Kaderisasi'].isin(tahun) & DF['Kampus'].isin(kampus)]
+
 if search:
     df = df[df['Nama'].str.contains(search, case=False, na=False) | df['NIK'].astype(str).str.contains(search)]
 # apply LK filter (rows kept if any LK column matches selected statuses)
